@@ -1,4 +1,4 @@
-package com.umf;
+package com.umf.generator;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import com.umf.utils.PropertiesLoaderUtils;
  * @author hp
  * @see
  */
-public class CreateBean {
+public class CreateClinetBean implements CreateBean {
 	
 	private static final String REQ_COMMOM_CODE = "funCode|reqDate|reqTime|calling|merId|clientVer";
 	private static final String RES_COMMOM_CODE = "funCode|reqDate|reqTime|retCode|retMsg";
@@ -43,24 +43,11 @@ public class CreateBean {
 	private String parse(ClassTempalte classTempalte) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("package ").append(classTempalte.getPackageinfo()).append(";\r\n");
-		if(classTempalte.isReq()){
-			sb.append("import ").append("javax.validation.constraints.Pattern").append(";\r\n");
-			sb.append("import ").append("org.hibernate.validator.constraints.NotEmpty").append(";\r\n");
-			sb.append("import ").append(PropertiesLoaderUtils.get("resparentClass")).append(";\r\n");
-		} else {
-			sb.append("import ").append(PropertiesLoaderUtils.get("reqparentClass")).append(";\r\n");
-		}
 		sb.append("import ").append(classTempalte.getParentClassAllName()).append(";\r\n\r\n\r\n");
 		sb.append("public class " + classTempalte.getClassName() + " extends " + classTempalte.getParentClass() + " {\r\n\r\n");
 		
-		processAllAttrs(sb,classTempalte);
-		if(!classTempalte.isReq()){
-			processConstruct(sb,classTempalte);
-		}
+		processAllAttrs(sb,classTempalte);	
 		processAllMethod(sb,classTempalte);
-		if(classTempalte.isReq()){
-			processCreateResponseData(sb,classTempalte);
-		}
 		processToString(sb,classTempalte);
 		sb.append("}\r\n");
 		System.out.println(sb.toString());
@@ -89,13 +76,6 @@ public class CreateBean {
 			sb.append("\t/**\r\n");
 			sb.append("\t * " + attribute.getNotes() +  "\r\n");
 			sb.append("\t */\r\n");
-			
-			if(classTempalte.isReq() && attribute.isMust()){
-				sb.append("\t@NotEmpty(message=\"{" + attribute.getName() + ".empty}\")\r\n");
-			}
-			if(classTempalte.isReq() && attribute.isRegular()){
-				sb.append("\t@Pattern(regexp=\"{" + attribute.getRegularExpression() + "}\",message=\"{" + attribute.getName() + ".pattern.error}\")\r\n");
-			}
 			sb.append("\tprivate String " + attribute.getName() + ";\r\n\r\n");
 		}
 	}
@@ -135,33 +115,9 @@ public class CreateBean {
 		}
 	}
 	
-	/**
-	 * 生成构造方法
-	 * 
-	 * @param sb
-	 */
-	private void processConstruct(StringBuffer sb,ClassTempalte classTempalte) {
-		sb.append("\t/**\r\n");
-		sb.append("\t * 有参的构造方法\r\n");
-		sb.append("\t */\r\n");
-		sb.append("\tpublic ").append(classTempalte.getClassName()).append("(RequestData requestData) {\r\n");
-		sb.append("\t\tsuper(requestData);\r\n");
-		sb.append("\t}\r\n\r\n");
-	}
 	
-	/**
-	 * 生成创建响应类的方法
-	 * 
-	 * @param sb
-	 */
-	private void processCreateResponseData(StringBuffer sb,ClassTempalte classTempalte) {
-		sb.append("\t/**\r\n");
-		sb.append("\t * 创建请求类对应的响应类\r\n");
-		sb.append("\t */\r\n");
-		sb.append("\tpublic ResponseData createResponseData() {\r\n");
-		sb.append("\t\t return new " + classTempalte.getClassName().substring(0,classTempalte.getClassName().length() - 11) + "ResponseData"   + "();\r\n");
-		sb.append("\t}\r\n\r\n");
-	}
+	
+	
 	
 	/**
 	 * 生成toString方法

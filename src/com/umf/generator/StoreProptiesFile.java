@@ -1,4 +1,4 @@
-package com.umf;
+package com.umf.generator;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

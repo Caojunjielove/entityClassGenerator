@@ -4,6 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.umf.generator.Attribute;
+import com.umf.generator.ClassTempalte;
+import com.umf.generator.CreateBean;
+import com.umf.generator.CreateClinetBean;
+import com.umf.generator.CreateServerBean;
+import com.umf.generator.LoadFileTemplate;
+import com.umf.generator.StoreProptiesFile;
 import com.umf.utils.PropertiesLoaderUtils;
 
 public class Main {
@@ -13,13 +20,26 @@ public class Main {
 		List<ClassTempalte> list = loadFile.parseFile(PropertiesLoaderUtils.get("inputFIle"));
 		List<Attribute> attrList = new ArrayList<Attribute>();
 		
-		CreateBean createBean = new CreateBean();
+		boolean isClient  = Boolean.valueOf(PropertiesLoaderUtils.get("isClient"));
+		
+		CreateBean createBean;
+		
+		if(isClient){
+			createBean = new CreateClinetBean();
+		}else{
+			createBean = new CreateServerBean();
+		}
+		
 		for (ClassTempalte classTempalte : list) {
 			createBean.createBeanMethod(classTempalte);
 			if(classTempalte.isReq()){
 				attrList.addAll(classTempalte.getAttrList());
 			}
 		}
-		StoreProptiesFile.createMsgFile(attrList);
+		if(!isClient){
+			StoreProptiesFile.createMsgFile(attrList);
+		}
+		
 	}
 }
+

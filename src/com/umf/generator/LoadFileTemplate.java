@@ -1,4 +1,4 @@
-package com.umf;
+package com.umf.generator;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.umf;
+package com.umf.generator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
