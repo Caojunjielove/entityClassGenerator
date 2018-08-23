@@ -18,8 +18,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.umf.utils.PropertiesLoaderUtils;
 
 /** 
- * @Description£º½âÎöexcel¹¤¾ßÀà
- * <p>´´½¨ÈÕÆÚ£º2018Äê8ÔÂ21ÈÕ </p>
+ * @Descriptionï¼šè§£æexcelå·¥å…·ç±»
+ * <p>åˆ›å»ºæ—¥æœŸï¼š2018å¹´8æœˆ21æ—¥ </p>
  * @version V1.0  
  * @author hp
  * @see
@@ -65,7 +65,7 @@ public class ExcelParseTool {
         Row row;
         ClassTempalte classTempalte = new ClassTempalte();
         classTempalte.setClassName(sheet.getSheetName());
-        classTempalte.setPackageinfo(PropertiesLoaderUtils.get("package"));
+        classTempalte.setPackageinfo(PropertiesLoaderUtils.get("model.package"));
         
         Iterator<Row> iterator = sheet.iterator();
         List<Attribute> attrList = new ArrayList<Attribute>();
@@ -73,7 +73,7 @@ public class ExcelParseTool {
         while(iterator.hasNext()) {
             row = iterator.next();
             List<String> cells = parseRow(row);
-            System.out.println("µ¥Ôª¸ñĞÅÏ¢:" + cells.get(0));
+            System.out.println("å•å…ƒæ ¼ä¿¡æ¯:" + cells.get(0));
             if("[REQ]".equals(cells.get(0).trim())){
             	classTempalte.setReq(true);
             	String parent = PropertiesLoaderUtils.get("reqparentClass");

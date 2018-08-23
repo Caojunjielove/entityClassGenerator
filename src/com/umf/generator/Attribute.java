@@ -1,8 +1,8 @@
 package com.umf.generator;
 
 /** 
- * @Description£ºÊôĞÔ¶ÔÏó
- * <p>´´½¨ÈÕÆÚ£º2018Äê8ÔÂ21ÈÕ </p>
+ * @Descriptionï¼šå±æ€§å¯¹è±¡
+ * <p>åˆ›å»ºæ—¥æœŸï¼š2018å¹´8æœˆ21æ—¥ </p>
  * @version V1.0  
  * @author hp
  * @see

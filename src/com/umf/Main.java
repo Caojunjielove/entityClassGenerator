@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.umf.generator.Attribute;
 import com.umf.generator.ClassTempalte;
+import com.umf.generator.ControllerGenerator;
 import com.umf.generator.CreateBean;
 import com.umf.generator.CreateClinetBean;
 import com.umf.generator.CreateServerBean;
@@ -29,11 +30,15 @@ public class Main {
 		}else{
 			createBean = new CreateServerBean();
 		}
+		ControllerGenerator controllerGenerator = new ControllerGenerator();
 		
 		for (ClassTempalte classTempalte : list) {
 			createBean.createBeanMethod(classTempalte);
 			if(classTempalte.isReq()){
 				attrList.addAll(classTempalte.getAttrList());
+				if(!isClient){
+					controllerGenerator.createBeanMethod(classTempalte);
+				}
 			}
 		}
 		if(!isClient){

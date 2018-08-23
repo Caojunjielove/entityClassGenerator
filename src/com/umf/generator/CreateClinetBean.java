@@ -1,5 +1,6 @@
 package com.umf.generator;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -7,8 +8,8 @@ import java.io.PrintWriter;
 import com.umf.utils.PropertiesLoaderUtils;
 
 /** 
- * @Description£ºÉú³ÉÀà¶ÔÏóµÄ¹¤¾ß
- * <p>´´½¨ÈÕÆÚ£º2018Äê8ÔÂ21ÈÕ </p>
+ * @Descriptionï¼šç”Ÿæˆç±»å¯¹è±¡çš„å·¥å…·
+ * <p>åˆ›å»ºæ—¥æœŸï¼š2018å¹´8æœˆ21æ—¥ </p>
  * @version V1.0  
  * @author hp
  * @see
@@ -19,9 +20,9 @@ public class CreateClinetBean implements CreateBean {
 	private static final String RES_COMMOM_CODE = "funCode|reqDate|reqTime|retCode|retMsg";
 	
 	/**
-	 * @Description£ºÉú³ÉÀàÎÄ¼ş
-	 * <p>´´½¨ÈË£ºhp ,  2018Äê8ÔÂ21ÈÕ  ÏÂÎç5:59:34</p>
-	 * <p>ĞŞ¸ÄÈË£ºhp ,  2018Äê8ÔÂ21ÈÕ  ÏÂÎç5:59:34</p>
+	 * @Descriptionï¼šç”Ÿæˆç±»æ–‡ä»¶
+	 * <p>åˆ›å»ºäººï¼šhp ,  2018å¹´8æœˆ21æ—¥  ä¸‹åˆ5:59:34</p>
+	 * <p>ä¿®æ”¹äººï¼šhp ,  2018å¹´8æœˆ21æ—¥  ä¸‹åˆ5:59:34</p>
 	 *
 	 * @param classTempalte
 	 * void 
@@ -30,6 +31,15 @@ public class CreateClinetBean implements CreateBean {
 		String content = parse(classTempalte);
 		try {
 			String path = PropertiesLoaderUtils.get("outPath");
+			String packagePath = PropertiesLoaderUtils.get("model.package");
+			packagePath = packagePath.replace(".", "\\");
+			path = path + "\\" + packagePath;
+			File file = new File(path);
+			
+			if(!file.exists()){
+				file.mkdirs();
+			}
+			
 			FileWriter fw = new FileWriter(path + "\\" +classTempalte.getClassName() + ".java");
 			PrintWriter pw = new PrintWriter(fw);
 			pw.println(content);
@@ -44,7 +54,11 @@ public class CreateClinetBean implements CreateBean {
 		StringBuffer sb = new StringBuffer();
 		sb.append("package ").append(classTempalte.getPackageinfo()).append(";\r\n");
 		sb.append("import ").append(classTempalte.getParentClassAllName()).append(";\r\n\r\n\r\n");
-		sb.append("public class " + classTempalte.getClassName() + " extends " + classTempalte.getParentClass() + " {\r\n\r\n");
+		sb.append("public class " + classTempalte.getClassName());
+		if(classTempalte.getParentClass() != null && !"".equals(classTempalte.getParentClass().trim())){
+			sb.append(" extends " + classTempalte.getParentClass());
+		}
+		sb.append(" {\r\n\r\n");
 		
 		processAllAttrs(sb,classTempalte);	
 		processAllMethod(sb,classTempalte);
@@ -56,7 +70,7 @@ public class CreateClinetBean implements CreateBean {
 	}
 	
 	/**
-	 * ½âÎöÊä³öÊôĞÔ
+	 * è§£æè¾“å‡ºå±æ€§
 	 * 
 	 * @return
 	 */
@@ -64,13 +78,15 @@ public class CreateClinetBean implements CreateBean {
 		
 		for (Attribute attribute : classTempalte.getAttrList()) {
 			
-			if(classTempalte.isReq()){
-				if(REQ_COMMOM_CODE.contains(attribute.getName())){
-					continue;
-				}
-			}else{
-				if(RES_COMMOM_CODE.contains(attribute.getName())){
-					continue;
+			if(classTempalte.getParentClass() != null && !"".equals(classTempalte.getParentClass().trim())){
+				if(classTempalte.isReq()){
+					if(REQ_COMMOM_CODE.contains(attribute.getName())){
+						continue;
+					}
+				}else{
+					if(RES_COMMOM_CODE.contains(attribute.getName())){
+						continue;
+					}
 				}
 			}
 			sb.append("\t/**\r\n");
@@ -81,24 +97,26 @@ public class CreateClinetBean implements CreateBean {
 	}
 
 	/**
-	 * Éú³ÉËùÓĞµÄ·½·¨
+	 * ç”Ÿæˆæ‰€æœ‰çš„æ–¹æ³•
 	 * 
 	 * @param sb
 	 */
 	private void processAllMethod(StringBuffer sb,ClassTempalte classTempalte) {
 		
 		for (Attribute attribute : classTempalte.getAttrList()) {
-			if(classTempalte.isReq()){
-				if(REQ_COMMOM_CODE.contains(attribute.getName())){
-					continue;
-				}
-			}else{
-				if(RES_COMMOM_CODE.contains(attribute.getName())){
-					continue;
+			if(classTempalte.getParentClass() != null && !"".equals(classTempalte.getParentClass().trim())){
+				if(classTempalte.isReq()){
+					if(REQ_COMMOM_CODE.contains(attribute.getName())){
+						continue;
+					}
+				}else{
+					if(RES_COMMOM_CODE.contains(attribute.getName())){
+						continue;
+					}
 				}
 			}
 			sb.append("\t/**\r\n");
-			sb.append("\t * ÉèÖÃ" + attribute.getNotes() +  "\r\n");
+			sb.append("\t * è®¾ç½®" + attribute.getNotes() +  "\r\n");
 			sb.append("\t */\r\n");
 			sb.append("\tpublic void set" + initcap(attribute.getName()) + "(String " + attribute.getName()
 					+ ") {\r\n");
@@ -106,7 +124,7 @@ public class CreateClinetBean implements CreateBean {
 			sb.append("\t}\r\n\r\n");
 
 			sb.append("\t/**\r\n");
-			sb.append("\t * »ñÈ¡" + attribute.getNotes() +  "\r\n");
+			sb.append("\t * è·å–" + attribute.getNotes() +  "\r\n");
 			sb.append("\t */\r\n");
 			sb.append("\tpublic String get"
 					+ initcap(attribute.getName()) + " (){\r\n");
@@ -120,30 +138,32 @@ public class CreateClinetBean implements CreateBean {
 	
 	
 	/**
-	 * Éú³ÉtoString·½·¨
+	 * ç”ŸæˆtoStringæ–¹æ³•
 	 * 
 	 * @param sb
 	 */
 	private void processToString(StringBuffer sb,ClassTempalte classTempalte) {
 		
 		sb.append("\t/**\r\n");
-		sb.append("\t * toString·½·¨\r\n");
+		sb.append("\t * toStringæ–¹æ³•\r\n");
 		sb.append("\t */\r\n");
 		sb.append("\tpublic String toString() {\r\n");
 		sb.append("\t\t return \"" + classTempalte.getClassName() + "[");
 		for (Attribute attr : classTempalte.getAttrList()) {
 			sb.append(attr.getName()).append("=\" + ");
-			if(classTempalte.isReq()){
-				if(REQ_COMMOM_CODE.contains(attr.getName())){
-					sb.append("get").append(initcap(attr.getName())).append("()");
+			if(classTempalte.getParentClass() != null && !"".equals(classTempalte.getParentClass().trim())){
+				if(classTempalte.isReq()){
+					if(REQ_COMMOM_CODE.contains(attr.getName())){
+						sb.append("get").append(initcap(attr.getName())).append("()");
+					}else{
+						sb.append(attr.getName());
+					}
 				}else{
-					sb.append(attr.getName());
-				}
-			}else{
-				if(RES_COMMOM_CODE.contains(attr.getName())){
-					sb.append("get").append(initcap(attr.getName())).append("()");
-				}else{
-					sb.append(attr.getName());
+					if(RES_COMMOM_CODE.contains(attr.getName())){
+						sb.append("get").append(initcap(attr.getName())).append("()");
+					}else{
+						sb.append(attr.getName());
+					}
 				}
 			}
 			sb.append(" + \",");

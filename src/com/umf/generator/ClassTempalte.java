@@ -3,18 +3,18 @@ package com.umf.generator;
 import java.util.List;
 
 /** 
- * @Description£ºÀà¶ÔÏó
- * <p>´´½¨ÈÕÆÚ£º2018Äê8ÔÂ21ÈÕ </p>
+ * @Descriptionï¼šç±»å¯¹è±¡
+ * <p>åˆ›å»ºæ—¥æœŸï¼š2018å¹´8æœˆ21æ—¥ </p>
  * @version V1.0  
  * @author hp
  * @see
  */
 public class ClassTempalte {
 
-	private boolean isReq; //ÊÇ·ñÊÇÇëÇó
-	private String  packageinfo; //°üÃû
-	private String parentClassAllName; //¸¸ÀàÈ«Ãû
-	private String parentClass; //¸¸ÀàÃû
+	private boolean isReq; //æ˜¯å¦æ˜¯è¯·æ±‚
+	private String  packageinfo; //åŒ…å
+	private String parentClassAllName; //çˆ¶ç±»å…¨å
+	private String parentClass; //çˆ¶ç±»å
 	private String className; 
 	private List<Attribute>  attrList;
 	public boolean isReq() {
